@@ -2,22 +2,44 @@ package org.koreait;
 
 public class Article {
     private int id;
+    private String RegDate;
+    private String UpdateDate;
     private String title;
     private String body;
+
+    public Article(int id, String regDate, String updateDate, String title, String body) {
+        this.id = id;
+        RegDate = regDate;
+        UpdateDate = updateDate;
+        this.title = title;
+        this.body = body;
+    }
 
     @Override
     public String toString() {
         return "Article{" +
                 "id=" + id +
+                ", RegDate='" + RegDate + '\'' +
+                ", UpdateDate='" + UpdateDate + '\'' +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 '}';
     }
 
-    public Article(int id, String title, String body) {
-        this.id = id;
-        this.title = title;
-        this.body = body;
+    public String getRegDate() {
+        return RegDate;
+    }
+
+    public void setRegDate(String regDate) {
+        RegDate = regDate;
+    }
+
+    public String getUpdateDate() {
+        return UpdateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        UpdateDate = updateDate;
     }
 
     public String getBody() {
