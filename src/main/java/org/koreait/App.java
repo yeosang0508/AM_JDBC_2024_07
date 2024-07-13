@@ -123,34 +123,21 @@ public class App {
             System.out.print("새 내용 : ");
             String body = sc.nextLine();
 
-            PreparedStatement pstmt = null;
+            SecSql sql = new SecSql();
 
-            try {
-                String sql = "UPDATE article ";
-                sql += "SET updateDate = NOW()";
-                if (title.length() > 0) {
-                    sql += ",title = '" + title + "'";
-                }
-                if (body.length() > 0) {
-                    sql += ", `body` = '" + body + "'";
-                }
-                sql += " WHERE id = " + id + ";";
-
-                pstmt = conn.prepareStatement(sql);
-
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("에러 4: " + e);
-            } finally {
-                try {
-                    if (pstmt != null && !pstmt.isClosed()) {
-                        pstmt.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
+            sql.append("UPDATE article");
+            sql.append("SET UpdateDate = NOW()");
+            if(title.length() > 0){
+                sql.append(", title = ?", title);
             }
+            if(body.length() > 0){
+                sql.append(", `body` = ?", body);
+            }
+            sql.append("WHERE id = ?", id );
+
+
+            DBUtil.update(conn, sql);
+
             System.out.println(id + "번 글이 수정되었습니다.");
         }
 
