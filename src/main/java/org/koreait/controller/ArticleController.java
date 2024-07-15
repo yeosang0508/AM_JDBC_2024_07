@@ -44,6 +44,9 @@ public class ArticleController {
 
         int id = DBUtil.insert(conn, sql);
 
+        // 데이터를 직접 INSERT 하는 것도 service에게 전달, service는 DB의 문지기인
+        // Dao에게 전달하여 DB에 INSERT 되도록 하여야한다.
+
         System.out.println(id + "번 글이 생성되었습니다");
     }
 
@@ -58,10 +61,15 @@ public class ArticleController {
 
         List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
 
+        // Map<String,Object> type인 list
+        // DBUil.selectRows에서 해주는 것은?
+        //
         for (Map<String, Object> articleMap : articleListMap) {
             articles.add(new Article(articleMap));
         }
 
+        //순차적으로 articleMap에 articleListMap에 들어있는 정보를 넣어주고
+        // list에 저장
 
         if (articles.size() == 0) {
             System.out.println("게시글 없습니다.");
@@ -95,6 +103,7 @@ public class ArticleController {
 
         Article article = new Article(articleService.findId(conn, id));
 
+        // 이럴때 1행만 가져올수 있는것은 id가 primary이므로 1행만 가져올수 있는 것 
 
         System.out.println("번호 : " + article.getId());
         System.out.println("작성날짜 : " + article.getRegDate());
