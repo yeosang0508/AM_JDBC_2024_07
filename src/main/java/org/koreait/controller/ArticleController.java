@@ -103,7 +103,7 @@ public class ArticleController {
 
         Article article = new Article(articleService.findId(conn, id));
 
-        // 이럴때 1행만 가져올수 있는것은 id가 primary이므로 1행만 가져올수 있는 것 
+        // 이럴때 1행만 가져올수 있는것은 id가 primary이므로 1행만 가져올수 있는 것
 
         System.out.println("번호 : " + article.getId());
         System.out.println("작성날짜 : " + article.getRegDate());

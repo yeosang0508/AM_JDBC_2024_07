@@ -103,4 +103,55 @@ public class MemberController {
         System.out.println(id + "번 회원이 생성되었습니다");
     }
 
+    public void dologin() {
+        String loginId = null;
+        String loginPw = null;
+
+        System.out.println("== 로그인 ==");
+        System.out.print("아이디 : ");
+        loginId = sc.nextLine().trim();
+
+        if (loginId.length() == 0 || loginId.contains(" ")) {
+            System.out.println("아이디 입력해주세요.");
+
+            return;
+        }
+
+        System.out.print("비밀번호 : ");
+        loginPw = sc.nextLine().trim();
+
+        int trycount = 3;
+        int count = 1;
+
+        while (trycount == 1) {
+
+            boolean isMember = memberService.isMember(conn, loginId, loginPw);
+
+            if (isMember == false) {
+                trycount--;
+
+                System.out.println(count + "번 실패," + (3 - count) + "번 남았습니다. 비밀번호 다시 입력해주세요.");
+                count++;
+
+                continue;
+            }
+
+            break;
+        }
+
+        memberMap = memberService.getMemberbyloginPw(loginId, loginPw);
+
+        if (memberMap == null) {
+            System.out.println("로그인 실패, 횟수를 초과했습니다.");
+            return;
+        } else {
+
+            memberService.getMemberbyloginPw(loginId, loginPw);
+            System.out.println("로그인 성공");
+
+            return;
+
+        }
+
+    }
 }

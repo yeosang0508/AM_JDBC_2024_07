@@ -16,4 +16,15 @@ public class MemberDao {
 
         return DBUtil.selectRowBooleanValue(conn, sql);
     }
+
+    public boolean isMember(Connection conn, String loginId, String loginPw) {
+        SecSql sql = new SecSql();
+
+        sql.append("SELECT COUNT(*) > 0");
+        sql.append("FROM `member`");
+        sql.append("WHERE loginId = ?,", loginId);
+        sql.append("loginPw = ?;", loginPw);
+
+        return DBUtil.selectRowBooleanValue(conn, sql);
+    }
 }
