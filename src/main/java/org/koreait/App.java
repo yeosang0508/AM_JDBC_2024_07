@@ -63,7 +63,7 @@ public class App {
         }
 
         MemberController memberController = new MemberController(sc, conn);
-        ArticleController articleController = new ArticleController(sc, conn, cmd);
+        ArticleController articleController = new ArticleController(sc, conn);
 
         if (cmd.equals("member join")) {
             memberController.doJoin();
@@ -72,17 +72,15 @@ public class App {
         } else if (cmd.equals("article list")) {
             articleController.showList();
         } else if (cmd.startsWith("article modify")) {
-            articleController.doModify();
+            articleController.doModify(cmd);
         } else if (cmd.startsWith("article delete")) {
-            articleController.doDelete();
+            articleController.doDelete(cmd);
         } else if (cmd.startsWith("article detail")) {
-            articleController.showDetail();
+            articleController.showDetail(cmd);
 
         }
 
         return 0;
     }
 }
-
-
 
