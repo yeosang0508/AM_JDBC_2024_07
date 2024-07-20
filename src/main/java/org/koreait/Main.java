@@ -50,6 +50,8 @@ public class Main {
                     pstmt = conn.prepareStatement(sql);
 
                     int affectedRows = pstmt.executeUpdate();
+
+
                     System.out.println(affectedRows + "번 글 작성되었습니다.");
 
                     System.out.println("== 작성 완료 ==");
@@ -116,7 +118,7 @@ public class Main {
                     }
 
                     System.out.println("   번호   /   작성 날짜   /   제목   /   내용   ");
-                    for(int i = articles.size() - 1; i >= 0; i--){
+                    for(int i = 0 ; i < articles.size() ; i++){
                         Article article = articles.get(i);
                         System.out.println(article.getId() + "   /   " + article.getRegDate()+"   /   "+article.getTitle()+"   /   "+article.getBody());
                     }
@@ -147,6 +149,74 @@ public class Main {
                         e.printStackTrace();
                     }
                 }
+
+
+            }else if(cmd.startsWith("article modify")) {
+                Connection conn = null;
+                PreparedStatement pstmt = null;
+
+                try{
+                    Class.forName("org.mariadb.jdbc.Driver");
+                    String url = "jdbc:mariadb://127.0.0.1:3306/AM_JDBC_2024_07?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul";
+
+                    conn = DriverManager.getConnection(url, "root","");
+
+                    System.out.println("DB 연결 성공");
+
+                    int id;
+
+                    try{
+                        id = Integer.parseInt(cmd.split(" ")[2].trim());
+                    } catch (Exception e){
+                        System.out.println("정수로 입력해주세요.");
+                        continue;
+                    }
+
+                    System.out.println("== 게시글 수정 ==");
+
+                    System.out.print("수정할 제목 : ");
+                    String title = sc.nextLine();
+
+                    System.out.print("수정할 내용 : ");
+                    String body = sc.nextLine();
+
+                    String sql = "UPDATE article ";
+                    sql += "SET regDate = NOW(), ";
+                    sql += "updateDate = NOW()";
+                    if(title.length() > 0){
+                        sql += ", title = '" + title + "'";
+                    }
+                    if(body.length() > 0){
+                        sql += ", body = '" + body + "'";
+                    }
+                    sql += " WHERE id = " + id +";";
+
+                    pstmt = conn.prepareStatement(sql);
+                    pstmt.executeUpdate();
+
+
+                    System.out.println(id + "번 글이 수정되었습니다.");
+
+                }catch(ClassNotFoundException e){
+                    System.out.println("드라이버 로딩 실패" + e );
+                }catch (SQLException e){
+                    System.out.println("에러 : " + e);
+                } finally {
+                    try{
+                        if(pstmt != null && !pstmt.isClosed()){
+                            pstmt.close();
+                        }
+                    }catch (SQLException e){
+                        e.printStackTrace();
+                    }try{
+                        if(conn != null && !conn.isClosed()){
+                            conn.close();
+                        }
+                    }catch (SQLException e){
+                        e.printStackTrace();
+                    }
+                }
+
 
 
             }else if(cmd.equals("exit")){
