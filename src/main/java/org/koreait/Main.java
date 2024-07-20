@@ -1,5 +1,9 @@
 package org.koreait;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,7 +17,6 @@ public class Main {
 
 
 
-        int id = 1;
         List<Article> articles = new ArrayList();
 
         while(true){
@@ -22,18 +25,60 @@ public class Main {
 
 
             if(cmd.equals("article write")){
-                System.out.println("게시글 작성");
-                System.out.print("제목 : ");
-                String title = sc.nextLine();
-                System.out.print("내용 : ");
-                String body = sc.nextLine();
 
-                Article article = new Article(id, Util.date(), title, body);
 
-                articles.add(article);
-                System.out.println(id + "번 글 작성되었습니다.");
-                id++;
-                System.out.println("== 작성 완료 ==");
+                Connection conn = null;
+                PreparedStatement pstmt = null;
+
+                try{
+                    Class.forName("org.mariadb.jdbc.Driver");
+                    String url = "jdbc:mariadb://127.0.0.1:3306/AM_JDBC_2024_07?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul";
+
+                    conn = DriverManager.getConnection(url, "root", "");
+
+                    System.out.println("DB 연결 성공");
+
+                    System.out.println("게시글 작성");
+                    System.out.print("제목 : ");
+                    String title = sc.nextLine();
+                    System.out.print("내용 : ");
+                    String body = sc.nextLine();
+
+                    String sql = "INSERT INTO article ";
+                    sql += "SET regDate = NOW(),";
+                    sql += "title = '" + title + "',";
+                    sql += "`body` = '" + body + "';";
+
+
+                    pstmt = conn.prepareStatement(sql);
+
+                    int affectedRows = pstmt.executeUpdate();
+                    System.out.println(affectedRows + "번 글 작성되었습니다.");
+
+                    System.out.println("== 작성 완료 ==");
+
+
+                }catch(ClassNotFoundException e){
+                    System.out.println("드라이버 로딩 실패" + e);
+                } catch (SQLException e){
+                    System.out.println("에러 : " + e);
+                } finally {
+                    try{
+                        if(conn != null && !conn.isClosed()){
+                            conn.close();
+                        }
+                    }catch(SQLException e){
+                        e.printStackTrace();
+                    }try{
+                        if(pstmt != null && !pstmt.isClosed()){
+                            pstmt.close();
+                        }
+                    }catch (SQLException e){
+                        e.printStackTrace();
+                    }
+                }
+
+
 
             } else if (cmd.equals("article list")){
                 System.out.println("== 목록 ==");
