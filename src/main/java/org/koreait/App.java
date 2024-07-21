@@ -124,6 +124,17 @@ public class App {
                 return 0;
             }
 
+            SecSql sql = new SecSql();
+            sql.append("SELECT *");
+            sql.append("FROM article");
+            sql.append("WHERE id = ?", id);
+
+            Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+
+            if(articleMap.isEmpty()){
+                System.out.println(id + "번 글은 없습니다.");
+                return 0;
+            }
             System.out.println("== 게시글 수정 ==");
 
             System.out.print("수정할 제목 : ");
@@ -133,7 +144,7 @@ public class App {
             String body = sc.nextLine();
 
 
-            SecSql sql = new SecSql();
+             sql = new SecSql();
 
             sql.append("UPDATE article");
             sql.append("SET regDate = NOW(),");
@@ -146,9 +157,59 @@ public class App {
             }
             sql.append("WHERE id = ?", id);
 
-            id = DBUtil.update(conn, sql);
+            DBUtil.update(conn, sql);
 
             System.out.println(id + "번 글이 수정되었습니다.");
+
+        } else if (cmd.startsWith("article delete")) {
+            int id;
+
+            try {
+                id = Integer.parseInt(cmd.split(" ")[2].trim());
+            } catch (Exception e) {
+                System.out.println("정수로 입력해주세요.");
+                return 0;
+            }
+
+            SecSql sql = new SecSql();
+
+            sql.append("DELETE FROM article");
+            sql.append("WHERE id = ?", id);
+
+            DBUtil.delete(conn, sql);
+
+            System.out.println(id + "번 글이 삭제되었습니다.");
+        } else if (cmd.startsWith("article detail")) {
+            int id;
+
+            try {
+                id = Integer.parseInt(cmd.split(" ")[2].trim());
+            } catch (Exception e) {
+                System.out.println("정수로 입력해주세요.");
+                return 0;
+            }
+
+            SecSql sql = new SecSql();
+
+            sql.append("SELECT *");
+            sql.append("FROM article");
+            sql.append("WHERE id = ?", id);
+
+            Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+
+            if(articleMap.isEmpty()){
+                System.out.println(id + "번 글은 없습니다.");
+                return 0;
+            }
+
+            Article article = new Article(articleMap);
+
+
+            System.out.println("번호 : " + article.getId());
+            System.out.println("작성날짜 : " + article.getRegDate());
+            System.out.println("수정날짜 : " + article.getUpdateDate());
+            System.out.println("제목 : " + article.getTitle());
+            System.out.println("내용 : " + article.getBody());
 
         }
 
