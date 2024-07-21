@@ -100,17 +100,17 @@ public class App {
             for (Map<String, Object> articleMap : articleListMap) {
                 articles.add(new Article(articleMap));
             }
-                if (articles.size() == 0) {
-                    System.out.println("작성된 게시글이 없습니다.");
-                    return 0;
-                }
+            if (articles.size() == 0) {
+                System.out.println("작성된 게시글이 없습니다.");
+                return 0;
+            }
 
-                System.out.println("   번호   /   작성 날짜   /   제목   /   내용   ");
+            System.out.println("   번호   /   작성 날짜   /   제목   /   내용   ");
 
-                for (int i = 0; i < articles.size(); i++) {
-                    Article article = articles.get(i);
-                    System.out.println(article.getId() + "   /   " + article.getRegDate() + "   /   " + article.getTitle() + "   /   " + article.getBody());
-                }
+            for (int i = 0; i < articles.size(); i++) {
+                Article article = articles.get(i);
+                System.out.println(article.getId() + "   /   " + article.getRegDate() + "   /   " + article.getTitle() + "   /   " + article.getBody());
+            }
 
 
         } else if (cmd.startsWith("article modify")) {
@@ -132,38 +132,24 @@ public class App {
             System.out.print("수정할 내용 : ");
             String body = sc.nextLine();
 
-            PreparedStatement pstmt = null;
 
-            try {
-                String sql = "UPDATE article ";
-                sql += "SET regDate = NOW(), ";
-                sql += "updateDate = NOW()";
-                if (title.length() > 0) {
-                    sql += ", title = '" + title + "'";
-                }
-                if (body.length() > 0) {
-                    sql += ", body = '" + body + "'";
-                }
-                sql += " WHERE id = " + id + ";";
+            SecSql sql = new SecSql();
 
-                pstmt = conn.prepareStatement(sql);
-                pstmt.executeUpdate();
-
-
-                System.out.println(id + "번 글이 수정되었습니다.");
-
-            } catch (SQLException e) {
-                System.out.println("에러 4 : " + e);
-            } finally {
-                try {
-                    if (pstmt != null && !pstmt.isClosed()) {
-                        pstmt.close();
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
+            sql.append("UPDATE article");
+            sql.append("SET regDate = NOW(),");
+            sql.append("updateDate = NOW()");
+            if (title.length() > 0) {
+                sql.append(", title = ?", title);
             }
+            if (body.length() > 0) {
+                sql.append(", `body` = ?", body);
+            }
+            sql.append("WHERE id = ?", id);
+
+            id = DBUtil.update(conn, sql);
+
+            System.out.println(id + "번 글이 수정되었습니다.");
+
         }
 
         return 0;
